@@ -3,5 +3,3 @@
 
 CMakeFiles/echo.dir/main.c.o: ../main.c
 
-CMakeFiles/echo.dir/test.c.o: ../test.c
-
