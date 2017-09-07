@@ -7,7 +7,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 
-#define PORT    5555
+#define PORT    80
 #define MAXMSG  512
 
 int
