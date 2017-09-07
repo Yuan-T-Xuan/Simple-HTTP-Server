@@ -4,6 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
+  "/Users/xuan/Documents/Networked and Distributed Systems/Simple-HTTP-Server/echo/echo_client.c" "/Users/xuan/Documents/Networked and Distributed Systems/Simple-HTTP-Server/echo/cmake-build-debug/CMakeFiles/echo.dir/echo_client.c.o"
   "/Users/xuan/Documents/Networked and Distributed Systems/Simple-HTTP-Server/echo/main.c" "/Users/xuan/Documents/Networked and Distributed Systems/Simple-HTTP-Server/echo/cmake-build-debug/CMakeFiles/echo.dir/main.c.o"
   )
 set(CMAKE_C_COMPILER_ID "AppleClang")

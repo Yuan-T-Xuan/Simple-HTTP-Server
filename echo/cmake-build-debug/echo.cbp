@@ -82,6 +82,9 @@
 				</MakeCommands>
 			</Target>
 		</Build>
+		<Unit filename="/Users/xuan/Documents/Networked and Distributed Systems/Simple-HTTP-Server/echo/echo_client.c">
+			<Option target="echo"/>
+		</Unit>
 		<Unit filename="/Users/xuan/Documents/Networked and Distributed Systems/Simple-HTTP-Server/echo/main.c">
 			<Option target="echo"/>
 		</Unit>

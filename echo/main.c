@@ -5,7 +5,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
-const unsigned short PORT = 80;
+const unsigned short PORT = 8089;
 const int BUFFER_SIZE = 40960;
 
 int make_socket(unsigned short port)
@@ -30,8 +30,7 @@ int make_socket(unsigned short port)
     return sock;
 }
 
-int read_from_client(int filedes) {
-    char buffer[BUFFER_SIZE];
+int read_from_client(int filedes, char *buffer) {
     int nbytes;
 
     nbytes = (int) read(filedes, buffer, BUFFER_SIZE);
@@ -44,8 +43,7 @@ int read_from_client(int filedes) {
         return -1;
     }
     else {
-        // ...
-        return 0;
+        return nbytes;
     }
 }
 
@@ -60,7 +58,7 @@ int main() {
     FD_ZERO(&active_fd_set);
     FD_SET(sock, &active_fd_set);
 
-    int size, new;
+    int size, new, nbytes;
     struct sockaddr_in clientname;
     while(1) {
         /* Block until input arrives on one or more active sockets. */
@@ -83,9 +81,17 @@ int main() {
                     FD_SET(new, &active_fd_set);
                 } else {
                     /* Data arriving on an already-connected socket. */
-                    if(read_from_client(i) < 0) {
+                    char buffer[BUFFER_SIZE];
+                    nbytes = read_from_client(i, buffer);
+                    if(nbytes < 0) {
                         close(i);
                         FD_CLR(i, &active_fd_set);
+                    } else {
+                        if(send(i, buffer, (size_t) nbytes, 0) != nbytes) {
+                            perror("failed to send message back");
+                            exit(EXIT_FAILURE);
+                        }
+                        printf("%s", buffer);
                     }
                 }
             }
