@@ -1,3 +1,0 @@
-/Users/xuan/Documents/Networked and Distributed Systems/Simple-HTTP-Server/echo/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/Users/xuan/Documents/Networked and Distributed Systems/Simple-HTTP-Server/echo/cmake-build-debug/CMakeFiles/edit_cache.dir
-/Users/xuan/Documents/Networked and Distributed Systems/Simple-HTTP-Server/echo/cmake-build-debug/CMakeFiles/echo.dir
