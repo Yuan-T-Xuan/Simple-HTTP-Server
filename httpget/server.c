@@ -125,6 +125,9 @@ int main() {
                         set_file();
                         log_info("New message from client ip: %s, message is: %s", ip, buffer);
                         close_file();
+                        //
+                        char *sample = "<!DOCTYPE html>\n<html>\n<title>HTML Tutorial</title>\n<body>\n<h1>heading</h1>\n</body>\n</html>";
+                        printf("%s\n", sample);
                     }
                 }
             }
