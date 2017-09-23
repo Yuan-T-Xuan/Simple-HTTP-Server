@@ -7,7 +7,7 @@
 #include <arpa/inet.h>
 #include "logging.h"
 
-const unsigned short PORT = 8081;
+const unsigned short PORT = 8080;
 const int BUFFER_SIZE = 40960;
 
 int make_socket(unsigned short port)
@@ -121,6 +121,7 @@ int main() {
                         }
                         */
                         char *ip = inet_ntoa((&clientname)->sin_addr);
+                        printf("New message from client ip: %s, message is: %s", ip, buffer);
                         set_file();
                         log_info("New message from client ip: %s, message is: %s", ip, buffer);
                         close_file();
