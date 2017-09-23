@@ -7,6 +7,8 @@
 #include <arpa/inet.h>
 #include "logging.h"
 
+#define SERVER_ID "simplehttpserver\r\n"
+
 const unsigned short PORT = 8080;
 const int BUFFER_SIZE = 40960;
 
@@ -58,6 +60,18 @@ int read_from_client(int filedes, char *buffer) {
     }
 }
 
+void send_header(int client) {
+    char buf[1024];
+    strcpy(buf, "HTTP/1.0 200 OK\r\n");
+    send(client, buf, strlen(buf), 0);
+    strcpy(buf, SERVER_STRING);
+    send(client, buf, strlen(buf), 0);
+    sprintf(buf, "Content-Type: text/html\r\n");
+    send(client, buf, strlen(buf), 0);
+    strcpy(buf, "\r\n");
+    send(client, buf, strlen(buf), 0);
+}
+
 int main() {
     int sock;
     fd_set active_fd_set, read_fd_set;
@@ -107,6 +121,12 @@ int main() {
                     char buffer[BUFFER_SIZE];
                     nbytes = read_from_client(i, buffer);
                     if(nbytes < 0) {
+                        //
+                        char *sample = "<!DOCTYPE html>\n<html>\n<title>HTML Tutorial</title>\n<body>\n<h1>heading</h1>\n</body>\n</html>";
+                        send_header(i);
+                        send(i, sample, strlen(sample), 0);
+                        send(i, "\r\n", strlen("\r\n"), 0);
+                        //
                         close(i);
                         FD_CLR(i, &active_fd_set);
                     } else {
@@ -125,9 +145,6 @@ int main() {
                         set_file();
                         log_info("New message from client ip: %s, message is: %s", ip, buffer);
                         close_file();
-                        //
-                        char *sample = "<!DOCTYPE html>\n<html>\n<title>HTML Tutorial</title>\n<body>\n<h1>heading</h1>\n</body>\n</html>";
-                        printf("%s\n", sample);
                     }
                 }
             }
