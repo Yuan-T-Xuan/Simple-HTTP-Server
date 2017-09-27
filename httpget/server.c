@@ -146,7 +146,10 @@ int main() {
                     char firstline[255];
                     char methodname[255];
                     get_line(i, firstline, sizeof(firstline));
+                    printf(firstline);
                     nbytes = read_from_client(i, buffer);
+                    printf(buffer);
+                    printf("- end -\n");
                     // check the method name
                     int k = 0, j = 0;
                     while(!isspace((int)firstline[j]) && (k < sizeof(methodname) - 1)) {
