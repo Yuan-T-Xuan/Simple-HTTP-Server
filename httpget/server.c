@@ -184,7 +184,7 @@ int main() {
                             char tmpbuf[1024];
                             sprintf(tmpbuf, "HTTP/1.0 404 NOT FOUND\r\n");
                             send(i, tmpbuf, strlen(tmpbuf), 0);
-                            sprintf(tmpbuf, SERVER_STRING);
+                            sprintf(tmpbuf, SERVER_ID);
                             send(i, tmpbuf, strlen(tmpbuf), 0);
                             sprintf(tmpbuf, "Content-Type: text/html\r\n");
                             send(i, tmpbuf, strlen(tmpbuf), 0);
@@ -208,9 +208,9 @@ int main() {
                                 send(i, buffer, strlen(buffer), 0);
                                 fgets(buffer, sizeof(buffer), resource);
                             }
+                            fclose(resource);
                         }
                         //printf("check 4");
-                        fclose(resource);
                         FD_CLR(i, &active_fd_set);
                         close(i);
                     } else {
