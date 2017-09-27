@@ -13,6 +13,7 @@
 
 const unsigned short PORT = 8080;
 const int BUFFER_SIZE = 40960;
+const char* FOLDER_NAME = "httpfiles";
 
 int get_line(int sock, char *buf, int size) {
     int i = 0;
@@ -145,6 +146,8 @@ int main() {
                     char buffer[BUFFER_SIZE];
                     char firstline[255];
                     char methodname[255];
+                    char urlpath[1024];
+                    char filepath[2048];
                     get_line(i, firstline, sizeof(firstline));
                     printf(firstline);
                     nbytes = read_from_client(i, buffer);
@@ -158,6 +161,24 @@ int main() {
                     }
                     methodname[k] = '\0';
                     if(strcasecmp(methodname, "GET") == 0) {
+                        //
+                        k = 0;
+                        while (isspace((int)firstline[j]) && (j < sizeof(firstline)))
+                            j++;
+                        while (!isspace((int)firstline[j]) && (k < sizeof(urlpath) - 1) && (j < sizeof(firstline))) {
+                            urlpath[k] = firstline[j];
+                            k++; j++;
+                        }
+                        urlpath[k] = '\0';
+                        strcpy(filepath, FOLDER_NAME);
+                        if(urlpath[1] == '\0') {
+                            strcat(filepath, "/index.html");
+                        } else {
+                            strcat(filepath, urlpath);
+                        }
+                        printf("urlpath: %s\n", urlpath);
+                        printf("filepath: %s\n", filepath);
+                        //
                         char *sample = "<!DOCTYPE html>\n<html>\n<title>HTML Tutorial</title>\n<body>\n<h1>heading</h1>\n</body>\n</html>";
                         send_header(i);
                         send(i, sample, strlen(sample), 0);
