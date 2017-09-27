@@ -208,9 +208,9 @@ int main() {
                                 send(i, buffer, strlen(buffer), 0);
                                 fgets(buffer, sizeof(buffer), resource);
                             }
+                            fclose(resource);
                         }
                         //printf("check 4");
-                        fclose(resource);
                         FD_CLR(i, &active_fd_set);
                         close(i);
                     } else {
