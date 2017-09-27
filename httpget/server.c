@@ -184,7 +184,7 @@ int main() {
                             char tmpbuf[1024];
                             sprintf(tmpbuf, "HTTP/1.0 404 NOT FOUND\r\n");
                             send(i, tmpbuf, strlen(tmpbuf), 0);
-                            sprintf(tmpbuf, SERVER_STRING);
+                            sprintf(tmpbuf, SERVER_ID);
                             send(i, tmpbuf, strlen(tmpbuf), 0);
                             sprintf(tmpbuf, "Content-Type: text/html\r\n");
                             send(i, tmpbuf, strlen(tmpbuf), 0);
