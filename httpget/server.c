@@ -194,6 +194,8 @@ int main() {
                         }
                         //printf("check 4");
                         fclose(resource);
+                        FD_CLR(i, &active_fd_set);
+                        close(i);
                     } else {
                         // ...
                     }
