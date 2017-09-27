@@ -181,18 +181,22 @@ int main() {
                         while(nbytes > 0) {
                             nbytes = read_from_client(i, buffer);
                         }
+                        printf("check 1");
                         // serve file
                         FILE *resource = fopen(filepath, "r");
                         if (resource == NULL) {
                             // should do something here ...
+                            printf("check 2");
                         } else {
                             send_header(i);
+                            printf("check 3");
                             fgets(buffer, sizeof(buffer), resource);
                             while (!feof(resource)) {
                                 send(i, buffer, strlen(buffer), 0);
                                 fgets(buffer, sizeof(buffer), resource);
                             }
                         }
+                        printf("check 4");
                         fclose(resource);
                     } else {
                         // ...
