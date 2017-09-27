@@ -161,7 +161,6 @@ int main() {
                     }
                     methodname[k] = '\0';
                     if(strcasecmp(methodname, "GET") == 0) {
-                        //
                         k = 0;
                         while (isspace((int)firstline[j]) && (j < sizeof(firstline)))
                             j++;
@@ -178,13 +177,23 @@ int main() {
                         }
                         printf("urlpath: %s\n", urlpath);
                         printf("filepath: %s\n", filepath);
-                        //
-                        char *sample = "<!DOCTYPE html>\n<html>\n<title>HTML Tutorial</title>\n<body>\n<h1>heading</h1>\n</body>\n</html>";
-                        send_header(i);
-                        send(i, sample, strlen(sample), 0);
-                        send(i, "\r\n", strlen("\r\n"), 0);
-                        FD_CLR(i, &active_fd_set);
-                        close(i);
+                        // make sure there is no more input
+                        while(nbytes > 0) {
+                            nbytes = read_from_client(i, buffer);
+                        }
+                        // serve file
+                        FILE *resource = fopen(filepath, "r");
+                        if (resource == NULL) {
+                            // should do something here ...
+                        } else {
+                            send_header(i);
+                            fgets(buffer, sizeof(buffer), resource);
+                            while (!feof(resource)) {
+                                send(i, buffer, strlen(buffer), 0);
+                                fgets(buffer, sizeof(buffer), resource);
+                            }
+                        }
+                        fclose(resource);
                     } else {
                         // ...
                     }
