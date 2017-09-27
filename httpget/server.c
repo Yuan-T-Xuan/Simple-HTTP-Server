@@ -181,8 +181,25 @@ int main() {
                         // serve file
                         FILE *resource = fopen(filepath, "r");
                         if (resource == NULL) {
-                            // should do something here ...
-                            //printf("check 2");
+                            char tmpbuf[1024];
+                            sprintf(tmpbuf, "HTTP/1.0 404 NOT FOUND\r\n");
+                            send(i, tmpbuf, strlen(tmpbuf), 0);
+                            sprintf(tmpbuf, SERVER_STRING);
+                            send(i, tmpbuf, strlen(tmpbuf), 0);
+                            sprintf(tmpbuf, "Content-Type: text/html\r\n");
+                            send(i, tmpbuf, strlen(tmpbuf), 0);
+                            sprintf(tmpbuf, "\r\n");
+                            send(i, tmpbuf, strlen(tmpbuf), 0);
+                            sprintf(tmpbuf, "<HTML><TITLE>Not Found</TITLE>\r\n");
+                            send(i, tmpbuf, strlen(tmpbuf), 0);
+                            sprintf(tmpbuf, "<BODY><P>The server could not fulfill\r\n");
+                            send(i, tmpbuf, strlen(tmpbuf), 0);
+                            sprintf(tmpbuf, "your request because the resource specified\r\n");
+                            send(i, tmpbuf, strlen(tmpbuf), 0);
+                            sprintf(tmpbuf, "is unavailable or nonexistent.\r\n");
+                            send(i, tmpbuf, strlen(tmpbuf), 0);
+                            sprintf(tmpbuf, "</BODY></HTML>\r\n");
+                            send(i, tmpbuf, strlen(tmpbuf), 0);
                         } else {
                             send_header(i);
                             //printf("check 3");
