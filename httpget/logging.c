@@ -52,7 +52,7 @@ void echo_log(int log_level, const char *record, int line, const char *fmt, ...)
 
     //Log to file
     if(Logger.fp){
-        printf("logging into file...");
+        //printf("logging into file...");
         va_list args;
         char time[32];
         time[strftime(time, sizeof(time), "%Y-%m-%d %H:%M:%S", local_time)] = '\0';
