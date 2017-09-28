@@ -215,6 +215,7 @@ int main() {
                         close(i);
                     } else {
                         // ...
+
                     }
                     // do forget to:
                     // FD_CLR(i, &active_fd_set);
