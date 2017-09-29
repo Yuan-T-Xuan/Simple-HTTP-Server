@@ -104,7 +104,7 @@ void handle_error(int client, char *error_code, char *msg){
 int main(int argc, char* argv[]) {
     int sock;
     fd_set active_fd_set, read_fd_set;
-    if(argc != 4){
+    if(argc < 4){
         printf("Usage ./lisod <HTTP PORT> <LOG_PATH> <WWW FOLDER NAME>\n");
         exit(EXIT_FAILURE);
     }
@@ -113,8 +113,8 @@ int main(int argc, char* argv[]) {
         printf("invalid port number!\n");
         exit(EXIT_FAILURE);
     }
-    LOG_PATH = argv[2];
-    FOLDER_NAME = argv[3];
+    LOG_PATH = argv[3];
+    FOLDER_NAME = argv[5];
     
     set_file(LOG_PATH);
     log_info("The server listens to port %d\n", PORT);
