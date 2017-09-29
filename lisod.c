@@ -13,9 +13,7 @@
 
 #define SERVER_ID "simplehttpserver\r\n"
 
-const unsigned short PORT = 9999;
 const int BUFFER_SIZE = 40960;
-const char* FOLDER_NAME = "httpfiles";
 
 int make_socket(unsigned short port)
 {
@@ -108,9 +106,25 @@ void handle_error(int client, char *error_code, char *msg){
     send(client, body, strlen(body), 0);
 }
 
-int main() {
+int main(int argc, char* argv[]) {
     int sock;
+    int PORT;
+    char* FOLDER_NAME;
     fd_set active_fd_set, read_fd_set;
+    if(argc != 3){
+        printf("Usage ./lisod <HTTP PORT> <WWW Folder>\n");
+        exit(EXIT_FAILURE);
+    }
+    PORT = atoi(argv[1]);
+    if(PORT == 0 || PORT > 65535){
+        printf("invalid port number!\n");
+        exit(EXIT_FAILURE);
+    }
+    FOLDER_NAME = argv[2];
+    set_file();
+    log_info("The server listens to port %d\n", PORT);
+    log_info("The www folder is %s\n", FOLDER_NAME);
+    close_file();
     sock = make_socket(PORT);
     if(listen(sock, SOMAXCONN) < 0) {
         set_file();
@@ -199,7 +213,7 @@ int main() {
                             log_info("%s %s %s 404\n", request->http_method, request->http_uri, request->http_version);
                             close_file();
                         } else {
-                            send_header(i, get_type(request->http_uri));
+                            send_header(i, get_type(filepath));
                             fgets(buffer, sizeof(buffer), resource);
                             while (!feof(resource)) {
                                 send(i, buffer, strlen(buffer), 0);
