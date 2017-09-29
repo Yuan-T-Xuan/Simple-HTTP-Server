@@ -10,11 +10,11 @@
 #include <time.h>
 #include "logging.h"
 #include "parse.h"
-
 #define SERVER_ID "simplehttpserver\r\n"
-
 const int BUFFER_SIZE = 40960;
-
+int PORT;
+char* LOG_PATH;
+char* FOLDER_NAME;
 int make_socket(unsigned short port)
 {
     int sock;
@@ -38,7 +38,6 @@ int make_socket(unsigned short port)
 
     return sock;
 }
-
 char* get_type(char *uri)
 {
     if (strstr(uri, ".html"))
@@ -104,9 +103,6 @@ void handle_error(int client, char *error_code, char *msg){
 
 int main(int argc, char* argv[]) {
     int sock;
-    int PORT;
-    char* LOG_PATH;
-    char* FOLDER_NAME;
     fd_set active_fd_set, read_fd_set;
     if(argc != 4){
         printf("Usage ./lisod <HTTP PORT> <LOG_PATH> <WWW FOLDER NAME>\n");
@@ -119,16 +115,11 @@ int main(int argc, char* argv[]) {
     }
     LOG_PATH = argv[2];
     FOLDER_NAME = argv[3];
-    extern FILE *fp;
-    fp = fopen(LOG_PATH, "w");
-    if(fp == NULL)
-    {
-        printf("Can not open log file!\n");
-        exit(EXIT_FAILURE);
-    }
-    set_file(fp);
+    
+    set_file(LOG_PATH);
     log_info("The server listens to port %d\n", PORT);
     log_info("The www folder is %s\n", FOLDER_NAME);
+    log_info("The log path is %s\n", LOG_PATH);
     sock = make_socket(PORT);
     if(listen(sock, SOMAXCONN) < 0) {
         perror("failed to listen on the socket\n");

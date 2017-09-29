@@ -19,8 +19,19 @@ static struct{
     int mute;//if set to 0, print log into stderr; if set to 1, will not print log into stderr but still logging into file
 }Logger;
 
-void set_file(FILE *fp){
-    Logger.fp = fp;
+void set_file(char *filepath){
+    Logger.fp = fopen("log.txt", "w");
+    if(Logger.fp == NULL){
+        printf("error opening log file!\n");
+        exit(EXIT_FAILURE);
+    }
+    setvbuf(fp, NULL, _IOLBF, 0);
+}
+
+void close_file(){
+    if(Logger.fp){
+        fclose(Logger.fp);
+    }
 }
 
 void set_log_level(int log_level){
@@ -46,7 +57,6 @@ void echo_log(int log_level, const char *record, int line, const char *fmt, ...)
 
     //Log to file
     if(Logger.fp){
-        //printf("logging into file...");
         va_list args;
         char time[32];
         time[strftime(time, sizeof(time), "%Y-%m-%d %H:%M:%S", local_time)] = '\0';
