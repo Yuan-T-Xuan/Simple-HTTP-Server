@@ -19,14 +19,8 @@ static struct{
     int mute;//if set to 0, print log into stderr; if set to 1, will not print log into stderr but still logging into file
 }Logger;
 
-void set_file(){
-    Logger.fp = fopen("log.txt", "a");
-}
-
-void close_file(){
-    if(Logger.fp){
-        fclose(Logger.fp);
-    }
+void set_file(FILE *fp){
+    Logger.fp = fp;
 }
 
 void set_log_level(int log_level){

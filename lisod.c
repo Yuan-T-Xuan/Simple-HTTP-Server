@@ -22,10 +22,8 @@ int make_socket(unsigned short port)
 
     sock = socket(PF_INET, SOCK_STREAM, 0);
     if(sock < 0) {
-        set_file();
         perror("failed to establish socket\n");
         log_error("failed to establish socket\n");
-        close_file();
         exit(EXIT_FAILURE);
     }
 
@@ -33,10 +31,8 @@ int make_socket(unsigned short port)
     name.sin_port = htons(port);
     name.sin_addr.s_addr = htonl(INADDR_ANY);
     if(bind(sock, (struct sockaddr *) &name, sizeof(name)) < 0) {
-        set_file();
         perror("failed to bind a name to socket\n");
         log_error("failed to bind a name to socket\n");
-        close_file();
         exit(EXIT_FAILURE);
     }
 
@@ -109,10 +105,11 @@ void handle_error(int client, char *error_code, char *msg){
 int main(int argc, char* argv[]) {
     int sock;
     int PORT;
+    char* LOG_PATH;
     char* FOLDER_NAME;
     fd_set active_fd_set, read_fd_set;
-    if(argc != 3){
-        printf("Usage ./lisod <HTTP PORT> <WWW Folder>\n");
+    if(argc != 4){
+        printf("Usage ./lisod <HTTP PORT> <LOG_PATH> <WWW FOLDER NAME>\n");
         exit(EXIT_FAILURE);
     }
     PORT = atoi(argv[1]);
@@ -120,17 +117,22 @@ int main(int argc, char* argv[]) {
         printf("invalid port number!\n");
         exit(EXIT_FAILURE);
     }
-    FOLDER_NAME = argv[2];
-    set_file();
+    LOG_PATH = argv[2];
+    FOLDER_NAME = argv[3];
+    extern FILE *fp;
+    fp = fopen(LOG_PATH, "w");
+    if(fp == NULL)
+    {
+        printf("Can not open log file!\n");
+        exit(EXIT_FAILURE);
+    }
+    set_file(fp);
     log_info("The server listens to port %d\n", PORT);
     log_info("The www folder is %s\n", FOLDER_NAME);
-    close_file();
     sock = make_socket(PORT);
     if(listen(sock, SOMAXCONN) < 0) {
-        set_file();
         perror("failed to listen on the socket\n");
         log_error("failed to listen on the socket\n");
-        close_file();
         exit(EXIT_FAILURE);
     }
     FD_ZERO(&active_fd_set);
@@ -142,10 +144,8 @@ int main(int argc, char* argv[]) {
         /* Block until input arrives on one or more active sockets. */
         read_fd_set = active_fd_set;
         if(select(FD_SETSIZE, &read_fd_set, NULL, NULL, NULL) < 0) {
-            set_file();
             perror("failed when processing \"select\"\n");
             log_error("failed when processing \"select\"\n");
-            close_file();
             exit(EXIT_FAILURE);
         }
 
@@ -155,15 +155,11 @@ int main(int argc, char* argv[]) {
                     size = sizeof(clientname);
                     newsock = accept(sock, (struct sockaddr *) &clientname, (socklen_t *) &size);
                     if(newsock < 0) {
-                        set_file();
                         perror("failed to accept new connection\n");
                         log_error("failed to accept new connection\n");
-                        close_file();
                     }
                     char *ip = inet_ntoa((&clientname)->sin_addr);
-                    set_file();
                     log_info("Server: new connection established from %s\n", ip);
-                    close_file();
                     FD_SET(newsock, &active_fd_set);
                 } else {
                     /* Data arriving on an already-connected socket. */
@@ -171,27 +167,21 @@ int main(int argc, char* argv[]) {
                     char filepath[255];
                     int readRet = recv(i, buffer, BUFFER_SIZE, 0);
                     if(readRet == -1){
-                        set_file();
                         perror("something went wrong when reading FD\n");
                         log_error("something went wrong when reading FD\n");
-                        close_file();
                         exit(EXIT_FAILURE);
                     }
                     //parse request
                     Request *request = parse(buffer,readRet,i);
                     if(request == NULL){//bad request
-                        set_file();
                         log_info("Bad Request From Client.\n");
-                        close_file();
                         handle_error(i, "400", "Bad Request");
                         FD_CLR(i, &active_fd_set);
                         close(i);
                         continue;
                     }
                     if(strcasecmp(request->http_version, "HTTP/1.1") != 0){
-                        set_file();
                         log_info("%s %s %s 505\n", request->http_method, request->http_uri, request->http_version);
-                        close_file();
                         handle_error(i, "505", "HTTP Version Not Supported.");
                         FD_CLR(i, &active_fd_set);
                         close(i);
@@ -209,9 +199,7 @@ int main(int argc, char* argv[]) {
                         if (resource == NULL) {
                             char tmpbuf[1024];
                             handle_error(i, "404", "Not Found");
-                            set_file();
                             log_info("%s %s %s 404\n", request->http_method, request->http_uri, request->http_version);
-                            close_file();
                         } else {
                             send_header(i, get_type(filepath));
                             fgets(buffer, sizeof(buffer), resource);
@@ -220,9 +208,7 @@ int main(int argc, char* argv[]) {
                                 fgets(buffer, sizeof(buffer), resource);
                             }
                             fclose(resource);
-                            set_file();
                             log_info("%s %s %s 200\n", request->http_method, request->http_uri, request->http_version);
-                            close_file();
                         }
                         FD_CLR(i, &active_fd_set);
                         close(i);
@@ -238,9 +224,7 @@ int main(int argc, char* argv[]) {
                         if (resource == NULL) {
                             char tmpbuf[1024];
                             handle_error(i, "404", "Not Found");
-                            set_file();
                             log_info("%s %s %s 404\n", request->http_method, request->http_uri, request->http_version);
-                            close_file();
                         } else {
                             //just send the header
                             send_header(i, get_type(request->http_uri));
@@ -260,17 +244,13 @@ int main(int argc, char* argv[]) {
                         sprintf(header, "%sDate: %s\r\n", header, t);
                         sprintf(header, "%sServer: %s", header, SERVER_ID);
                         send(i, header, strlen(header), 0);
-                        set_file();
                         log_info("%s %s %s 200\n", request->http_method, request->http_uri, request->http_version);
-                        close_file();
                         FD_CLR(i, &active_fd_set);
                         close(i);
                     }else{
                         //handle Unsupported Method
                         handle_error(i, "501", "HTTP Method Not Implemented");
-                        set_file();
                         log_info("%s %s %s 501\n", request->http_method, request->http_uri, request->http_version);
-                        close_file();
                         FD_CLR(i, &active_fd_set);
                         close(i);
                     }
