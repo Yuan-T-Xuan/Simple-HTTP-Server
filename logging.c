@@ -25,7 +25,7 @@ void set_file(char *filepath){
         printf("error opening log file!\n");
         exit(EXIT_FAILURE);
     }
-    setvbuf(fp, NULL, _IOLBF, 0);
+    setvbuf(Logger.fp, NULL, _IOLBF, 0);
 }
 
 void close_file(){
