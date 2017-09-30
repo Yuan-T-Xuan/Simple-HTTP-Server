@@ -13,7 +13,7 @@
 #include <fcntl.h>
 #include "logging.h"
 #include "parse.h"
-#define SERVER_ID "liso/1.0\r\n"
+#define SERVER_ID "liso/1.0, liso/1.0\r\n"
 const int BUFFER_SIZE = 40960;
 int PORT;
 char* LOG_PATH;
