@@ -13,7 +13,7 @@
 #include <fcntl.h>
 #include "logging.h"
 #include "parse.h"
-#define SERVER_ID "liso/1.0, liso/1.0\r\n"
+#define SERVER_ID "liso/1.0\r\n"
 const int BUFFER_SIZE = 40960;
 int PORT;
 char* LOG_PATH;
@@ -79,7 +79,6 @@ void send_header(int client, char *type,  int contentlength) {
     strftime(t, 32, "%a, %d %b %Y %H:%M:%S %Z", &tm);
     sprintf(header, "HTTP/1.1 200 OK\r\n");
     sprintf(header, "%sDate: %s\r\n", header, t);
-    sprintf(header, "%sServer: %s", header, SERVER_ID);
     sprintf(header, "%sServer: %s", header, SERVER_ID);
     sprintf(header, "%sContent-Type: %s\r\n", header, type);
     sprintf(header, "%sContent-Length: %d\r\n\r\n", header, contentlength);
