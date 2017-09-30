@@ -204,8 +204,8 @@ int main(int argc, char* argv[]) {
                             stat(filepath, &st);
                             send_header(i, get_type(filepath), st.st_size);
                             long ret;
-                            if(st_size < 1024){
-                                char content[st_size];
+                            if(st.st_size < 1024){
+                                char content[st.st_size];
                                 read(resource, content, sizeof(content));
                                 send(i, content, sizeof(content), 0);
                             }else{
