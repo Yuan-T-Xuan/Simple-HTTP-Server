@@ -223,6 +223,8 @@ int main(int argc, char* argv[]) {
                             log_info("%s %s %s 404\n", request->http_method, request->http_uri, request->http_version);
                         } else {
                             //just send the header
+                            struct stat st;
+                            stat(filepath, &st);
                             send_header(i, get_type(request->http_uri), 0);
                         }
                         FD_CLR(i, &active_fd_set);
