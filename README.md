@@ -3,4 +3,4 @@ This is a course project of Cornell CS 5450, Networked and Distributed Systems. 
 ## How to Run
 Building and executing the server code should be very simple:
 - make
-- ./lisod <PORT NUMBER> <LOG FILE PATH> <WWW FOLDER>
+- `./lisod <PORT NUMBER> <LOG FILE PATH> <WWW FOLDER`
