@@ -225,7 +225,7 @@ int main(int argc, char* argv[]) {
                             //just send the header
                             struct stat st;
                             stat(filepath, &st);
-                            send_header(i, get_type(request->http_uri), 0);
+                            send_header(i, get_type(request->http_uri), st.st_size);
                         }
                         FD_CLR(i, &active_fd_set);
                         close(i);
