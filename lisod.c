@@ -204,8 +204,14 @@ int main(int argc, char* argv[]) {
                             stat(filepath, &st);
                             send_header(i, get_type(filepath), st.st_size);
                             long ret;
-                            while ((ret = read(resource, buffer, sizeof(buffer))) > 0)
+                            if(st_size < 1024){
+                                char content[st_size];
+                                read(resource, content, sizeof(content));
+                                send(i, content, sizeof(content), 0);
+                            }else{
+                                while ((ret = read(resource, buffer, sizeof(buffer))) > 0)
                                 send(i, buffer, sizeof(buffer), 0); 
+                            }
                             log_info("%s %s %s 200\n", request->http_method, request->http_uri, request->http_version);
                         }
                         FD_CLR(i, &active_fd_set);
