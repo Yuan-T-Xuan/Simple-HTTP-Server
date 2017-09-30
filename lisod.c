@@ -119,8 +119,8 @@ int main(int argc, char* argv[]) {
         printf("invalid port number!\n");
         exit(EXIT_FAILURE);
     }
-    LOG_PATH = argv[3];
-    FOLDER_NAME = argv[5];
+    LOG_PATH = argv[2];
+    FOLDER_NAME = argv[3];
     
     set_file(LOG_PATH);
     log_info("The server listens to port %d\n", PORT);
