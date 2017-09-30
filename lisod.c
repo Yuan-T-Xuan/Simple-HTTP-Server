@@ -79,8 +79,10 @@ void send_header(int client, char *type,  int contentlength) {
     strftime(t, 32, "%a, %d %b %Y %H:%M:%S %Z", &tm);
     sprintf(header, "HTTP/1.1 200 OK\r\n");
     sprintf(header, "%sDate: %s\r\n", header, t);
+    sprintf(header, "%sLast-Modified: %s\r\n", header, t);
     sprintf(header, "%sServer: %s", header, SERVER_ID);
     sprintf(header, "%sContent-Type: %s\r\n", header, type);
+    sprintf(header, "%sConnection: close\r\n", header);
     sprintf(header, "%sContent-Length: %d\r\n\r\n", header, contentlength);
     send(client, header, strlen(header), 0);
 }
