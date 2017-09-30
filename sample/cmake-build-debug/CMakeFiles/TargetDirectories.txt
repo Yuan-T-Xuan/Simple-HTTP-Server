@@ -1,3 +1,0 @@
-/home/xuan/CLionProjects/testflight/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/xuan/CLionProjects/testflight/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/xuan/CLionProjects/testflight/cmake-build-debug/CMakeFiles/testflight.dir

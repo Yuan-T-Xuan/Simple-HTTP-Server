@@ -5,12 +5,15 @@
 #include <ctype.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/stat.h>
+#include <sys/mman.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <time.h>
+#include <fcntl.h>
 #include "logging.h"
 #include "parse.h"
-#define SERVER_ID "simplehttpserver\r\n"
+#define SERVER_ID "liso/1.0\r\n"
 const int BUFFER_SIZE = 40960;
 int PORT;
 char* LOG_PATH;
@@ -66,7 +69,7 @@ char* get_type(char *uri)
     }
 }
 
-void send_header(int client, char *type) {
+void send_header(int client, char *type,  int contentlength) {
     char t[32];
     char header[BUFFER_SIZE];
     struct tm tm;
@@ -77,7 +80,9 @@ void send_header(int client, char *type) {
     sprintf(header, "HTTP/1.1 200 OK\r\n");
     sprintf(header, "%sDate: %s\r\n", header, t);
     sprintf(header, "%sServer: %s", header, SERVER_ID);
-    sprintf(header, "%sContent-Type: %s\r\n\r\n", header, type);
+    sprintf(header, "%sServer: %s", header, SERVER_ID);
+    sprintf(header, "%sContent-Type: %s\r\n", header, type);
+    sprintf(header, "%sContent-Length: %d\r\n\r\n", header, contentlength);
     send(client, header, strlen(header), 0);
 }
 
@@ -113,8 +118,8 @@ int main(int argc, char* argv[]) {
         printf("invalid port number!\n");
         exit(EXIT_FAILURE);
     }
-    LOG_PATH = argv[3];
-    FOLDER_NAME = argv[5];
+    LOG_PATH = argv[2];
+    FOLDER_NAME = argv[3];
     
     set_file(LOG_PATH);
     log_info("The server listens to port %d\n", PORT);
@@ -186,19 +191,20 @@ int main(int argc, char* argv[]) {
                         } else {
                             strcat(filepath, request->http_uri);
                         }
-                        FILE *resource = fopen(filepath, "r");
-                        if (resource == NULL) {
+                        printf("filepath: %s\n", filepath);
+                        // FILE *resource = fopen(filepath, "r");
+                        int resource = open(filepath, O_RDONLY);
+                        if (resource == -1) {
                             char tmpbuf[1024];
                             handle_error(i, "404", "Not Found");
                             log_info("%s %s %s 404\n", request->http_method, request->http_uri, request->http_version);
                         } else {
-                            send_header(i, get_type(filepath));
-                            fgets(buffer, sizeof(buffer), resource);
-                            while (!feof(resource)) {
-                                send(i, buffer, strlen(buffer), 0);
-                                fgets(buffer, sizeof(buffer), resource);
-                            }
-                            fclose(resource);
+                            struct stat st;
+                            stat(filepath, &st);
+                            send_header(i, get_type(filepath), st.st_size);
+                            long ret;
+                            while ((ret = read(resource, buffer, sizeof(buffer))) > 0)
+                                send(i, buffer, sizeof(buffer), 0); 
                             log_info("%s %s %s 200\n", request->http_method, request->http_uri, request->http_version);
                         }
                         FD_CLR(i, &active_fd_set);
@@ -218,7 +224,7 @@ int main(int argc, char* argv[]) {
                             log_info("%s %s %s 404\n", request->http_method, request->http_uri, request->http_version);
                         } else {
                             //just send the header
-                            send_header(i, get_type(request->http_uri));
+                            send_header(i, get_type(request->http_uri), 0);
                         }
                         FD_CLR(i, &active_fd_set);
                         close(i);
